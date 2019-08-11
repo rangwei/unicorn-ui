@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="CatalogService" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="FundingRounds" EntityType="CatalogService.FundingRounds"/>
+				<EntitySet Name="InvestorsRecords" EntityType="CatalogService.InvestorsRecords"/>
+				<EntitySet Name="LeadInvestorRecords" EntityType="CatalogService.LeadInvestorRecords"/>
+				<EntitySet Name="Unicorns" EntityType="CatalogService.Unicorns"/>
+				<AssociationSet Name="FundingRounds_unicorn" Association="CatalogService.FundingRounds_unicorn">
+					<End Role="FundingRounds" EntitySet="FundingRounds"/>
+					<End Role="Unicorns" EntitySet="Unicorns"/>
+				</AssociationSet>
+				<AssociationSet Name="InvestorsRecords_funding_round" Association="CatalogService.InvestorsRecords_funding_round">
+					<End Role="InvestorsRecords" EntitySet="InvestorsRecords"/>
+					<End Role="FundingRounds" EntitySet="FundingRounds"/>
+				</AssociationSet>
+				<AssociationSet Name="LeadInvestorRecords_funding_round" Association="CatalogService.LeadInvestorRecords_funding_round">
+					<End Role="LeadInvestorRecords" EntitySet="LeadInvestorRecords"/>
+					<End Role="FundingRounds" EntitySet="FundingRounds"/>
+				</AssociationSet>
+			</EntityContainer>
+			<EntityType Name="FundingRounds">
+				<Key>
+					<PropertyRef Name="ID"/>
+				</Key>
+				<Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="uuid" Type="Edm.Guid"/>
+				<NavigationProperty Name="investors" Relationship="CatalogService.InvestorsRecords_funding_round" FromRole="FundingRounds"
+					ToRole="InvestorsRecords"/>
+				<NavigationProperty Name="lead_investor" Relationship="CatalogService.LeadInvestorRecords_funding_round" FromRole="FundingRounds"
+					ToRole="LeadInvestorRecords"/>
+				<Property Name="short_name" Type="Edm.String"/>
+				<Property Name="valuation" Type="Edm.String"/>
+				<Property Name="funding_date" Type="Edm.String"/>
+				<NavigationProperty Name="unicorn" Relationship="CatalogService.FundingRounds_unicorn" FromRole="FundingRounds" ToRole="Unicorns"/>
+				<Property Name="unicorn_ID" Type="Edm.Guid"/>
+			</EntityType>
+			<EntityType Name="InvestorsRecords">
+				<Key>
+					<PropertyRef Name="ID"/>
+				</Key>
+				<Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="name" Type="Edm.String"/>
+				<NavigationProperty Name="funding_round" Relationship="CatalogService.InvestorsRecords_funding_round" FromRole="InvestorsRecords"
+					ToRole="FundingRounds"/>
+				<Property Name="funding_round_ID" Type="Edm.Guid"/>
+			</EntityType>
+			<EntityType Name="LeadInvestorRecords">
+				<Key>
+					<PropertyRef Name="ID"/>
+				</Key>
+				<Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="name" Type="Edm.String"/>
+				<NavigationProperty Name="funding_round" Relationship="CatalogService.LeadInvestorRecords_funding_round" FromRole="LeadInvestorRecords"
+					ToRole="FundingRounds"/>
+				<Property Name="funding_round_ID" Type="Edm.Guid"/>
+			</EntityType>
+			<EntityType Name="Unicorns">
+				<Key>
+					<PropertyRef Name="ID"/>
+				</Key>
+				<Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="update_on" Type="Edm.String"/>
+				<Property Name="name" Type="Edm.String"/>
+				<Property Name="logo_url" Type="Edm.String"/>
+				<Property Name="permalink" Type="Edm.String"/>
+				<Property Name="tag_page" Type="Edm.String"/>
+				<Property Name="country" Type="Edm.String"/>
+				<Property Name="last_funding_on" Type="Edm.String"/>
+				<Property Name="total_equity_funding" Type="Edm.String"/>
+				<Property Name="founded_on" Type="Edm.Int32"/>
+				<Property Name="category" Type="Edm.String"/>
+				<Property Name="rumored" Type="Edm.Int32"/>
+				<Property Name="post_money_val" Type="Edm.String"/>
+				<NavigationProperty Name="funding_rounds" Relationship="CatalogService.FundingRounds_unicorn" FromRole="Unicorns" ToRole="FundingRounds"/>
+				<Property Name="valuation_change" Type="Edm.Int32"/>
+				<Property Name="date_of_valuation" Type="Edm.String"/>
+			</EntityType>
+			<Association Name="FundingRounds_unicorn">
+				<End Role="FundingRounds" Type="CatalogService.FundingRounds" Multiplicity="*"/>
+				<End Role="Unicorns" Type="CatalogService.Unicorns" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="Unicorns">
+						<PropertyRef Name="ID"/>
+					</Principal>
+					<Dependent Role="FundingRounds">
+						<PropertyRef Name="unicorn_ID"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="InvestorsRecords_funding_round">
+				<End Role="InvestorsRecords" Type="CatalogService.InvestorsRecords" Multiplicity="*"/>
+				<End Role="FundingRounds" Type="CatalogService.FundingRounds" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="FundingRounds">
+						<PropertyRef Name="ID"/>
+					</Principal>
+					<Dependent Role="InvestorsRecords">
+						<PropertyRef Name="funding_round_ID"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="LeadInvestorRecords_funding_round">
+				<End Role="LeadInvestorRecords" Type="CatalogService.LeadInvestorRecords" Multiplicity="*"/>
+				<End Role="FundingRounds" Type="CatalogService.FundingRounds" Multiplicity="0..1"/>
+				<ReferentialConstraint>
+					<Principal Role="FundingRounds">
+						<PropertyRef Name="ID"/>
+					</Principal>
+					<Dependent Role="LeadInvestorRecords">
+						<PropertyRef Name="funding_round_ID"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
